@@ -2,6 +2,7 @@ package fsutil
 
 import (
 	"bufio"
+	"io/fs"
 	"os"
 )
 
@@ -12,6 +13,15 @@ func ReadString(path string) (string, error) {
 		return "", err
 	}
 	return string(data), nil
+}
+
+// WriteString writes a string content to a file.
+//
+// Permission perm is optional and defaults to [os.ModePerm].
+func WriteString(path, content string, perm ...fs.FileMode) error {
+	// Append the default permission.
+	perm = append(perm, os.ModePerm)
+	return os.WriteFile(path, []byte(content), perm[0])
 }
 
 // ReadLines reads a file and returns its content as a slice of strings.
