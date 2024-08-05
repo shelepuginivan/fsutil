@@ -85,3 +85,55 @@ func TestReadLines(t *testing.T) {
 		assert.Nil(t, actual)
 	})
 }
+
+func TestWriteLines(t *testing.T) {
+	t.Run("should write lines to a file", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "file.txt")
+		content := []string{
+			"I've got that self control",
+			"The kind you wanna know",
+			"The kind that makes you feel like you could do it on your own",
+			"No I can't hear you now while I'm well on my way",
+			"To the top of my game",
+			"I've got that self control",
+		}
+		expected := []byte(strings.Join(content, fsutil.NewLine))
+
+		err := fsutil.WriteLines(path, content)
+		assert.NoError(t, err)
+
+		actual, _ := os.ReadFile(path)
+		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("should write lines with a specific newline character", func(t *testing.T) {
+		newline := "\r"
+		path := filepath.Join(t.TempDir(), "file.txt")
+		content := []string{
+			"Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+			"sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+			"Uto enim ad minim veniam, quis nostrud exercitation ullamco laboris",
+			"nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor",
+			"in reprehenderit in voluptate velit esse cillum dolore eu fugiat",
+			"nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt",
+			"in culpa qui officia deserunt mollit anim id est laborum",
+		}
+		expected := []byte(strings.Join(content, fsutil.NewLine))
+
+		// E.g. early macOS versions use CR as a newline character.
+		err := fsutil.WriteLinesWithNewlineChar(path, content, newline)
+		assert.NoError(t, err)
+
+		actual, _ := os.ReadFile(path)
+		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("should return error if file cannot be written", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "readonly.txt")
+		os.WriteFile(path, []byte{}, 0400) // readonly permission.
+
+		err := fsutil.WriteLines(path, []string{"line 1", "line 2", "line 3", "...", "line 9"})
+
+		assert.Error(t, err)
+	})
+}
