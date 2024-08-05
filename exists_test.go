@@ -25,6 +25,28 @@ func TestDirExists(t *testing.T) {
 	})
 }
 
+func TestAssertDirExists(t *testing.T) {
+	t.Run("should not panic if directory exists", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			fsutil.AssertDirExists(t.TempDir())
+		})
+	})
+
+	t.Run("should panic if directory does not exist", func(t *testing.T) {
+		assert.Panics(t, func() {
+			fsutil.AssertDirExists("does not exist")
+		})
+	})
+
+	t.Run("should panic if path exists but is not a directory", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "file")
+		os.WriteFile(path, []byte("file"), os.ModePerm)
+		assert.Panics(t, func() {
+			fsutil.AssertDirExists(path)
+		})
+	})
+}
+
 func TestFileExists(t *testing.T) {
 	t.Run("should return true if file exists", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "file")
@@ -41,6 +63,28 @@ func TestFileExists(t *testing.T) {
 	})
 }
 
+func TestAssertFileExists(t *testing.T) {
+	t.Run("should not panic if file exists", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "file")
+		os.WriteFile(path, []byte("file"), os.ModePerm)
+		assert.NotPanics(t, func() {
+			fsutil.AssertFileExists(path)
+		})
+	})
+
+	t.Run("should panic if file does not exist", func(t *testing.T) {
+		assert.Panics(t, func() {
+			fsutil.AssertFileExists("does not exist")
+		})
+	})
+
+	t.Run("should panic if path exists but is not a file", func(t *testing.T) {
+		assert.Panics(t, func() {
+			fsutil.AssertFileExists(t.TempDir())
+		})
+	})
+}
+
 func TestPathExists(t *testing.T) {
 	t.Run("should return true if file exists", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "file")
@@ -54,5 +98,27 @@ func TestPathExists(t *testing.T) {
 
 	t.Run("should return false if path does not exist", func(t *testing.T) {
 		assert.False(t, fsutil.PathExists("this file does not exist"))
+	})
+}
+
+func TestAssertPathExists(t *testing.T) {
+	t.Run("should not panic if directory exists", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			fsutil.AssertPathExists(t.TempDir())
+		})
+	})
+
+	t.Run("should not panic if file exists", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "file")
+		os.WriteFile(path, []byte("file"), os.ModePerm)
+		assert.NotPanics(t, func() {
+			fsutil.AssertPathExists(path)
+		})
+	})
+
+	t.Run("should panic if path does not exist", func(t *testing.T) {
+		assert.Panics(t, func() {
+			fsutil.AssertPathExists("does not exist")
+		})
 	})
 }
