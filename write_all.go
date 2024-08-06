@@ -1,6 +1,7 @@
 package fsutil
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -16,6 +17,15 @@ func CreateAll(file string) (*os.File, error) {
 	}
 
 	return os.Create(file)
+}
+
+// RemoveAllIfExists is like [os.RemoveAll] except that it returns an error if
+// the path does not exist.
+func RemoveAllIfExists(path string) error {
+	if !PathExists(path) {
+		return fmt.Errorf("path %s does not exist", path)
+	}
+	return os.RemoveAll(path)
 }
 
 // WriteAll writes data to path, creating all necessary parent directories.
