@@ -27,6 +27,26 @@ func TestCreateAll(t *testing.T) {
 	})
 }
 
+func TestRemoveAllIfExists(t *testing.T) {
+	t.Run("should remove all subdirectories and files of provided path", func(t *testing.T) {
+		dir := t.TempDir()
+		f1, _ := os.Create(filepath.Join(dir, "f1"))
+		f2, _ := os.Create(filepath.Join(dir, "f1"))
+		f3, _ := os.Create(filepath.Join(dir, "f1"))
+		defer f1.Close()
+		defer f2.Close()
+		defer f3.Close()
+
+		err := fsutil.RemoveAllIfExists(dir)
+		assert.NoError(t, err)
+		assert.NoDirExists(t, dir)
+	})
+
+	t.Run("should return error if path does not exist", func(t *testing.T) {
+		assert.Error(t, fsutil.RemoveAllIfExists("does not exist"))
+	})
+}
+
 func TestWriteAll(t *testing.T) {
 	t.Run("should write file and create all parent directories", func(t *testing.T) {
 		expected := []byte("content")
