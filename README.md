@@ -41,7 +41,7 @@ binary, i.e. a non human-readable text, such as image, audio or video stream.
 The table below shows the accuracy of these functions, determined by testing
 against random byte sequences:
 
-|    Function    |   Mimimal accuracy   |   Actual accuracy    |
+|    Function    |   Minimal accuracy   |   Actual accuracy    |
 | :------------: | :------------------: | :------------------: |
 | `IsBinary`     |  990/1000 (`99.0%`)  | 1000/1000 (`100.0%`) |
 | `IsBinarySlow` | 1000/1000 (`100.0%`) | 1000/1000 (`100.0%`) |
