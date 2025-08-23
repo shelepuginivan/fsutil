@@ -21,6 +21,17 @@ func AssertDirExists(path string) {
 	}
 }
 
+// FirstExistingDir returns the first path that exists and is a directory.
+// The second value returned reports whether at least one path exists.
+func FirstExistingDir(paths ...string) (string, bool) {
+	for _, path := range paths {
+		if DirExists(path) {
+			return path, true
+		}
+	}
+	return "", false
+}
+
 // FileExists reports whether path exists and is a file.
 func FileExists(path string) bool {
 	stat, err := os.Stat(path)
@@ -37,6 +48,17 @@ func AssertFileExists(path string) {
 	}
 }
 
+// FirstExistingFile returns the first path that exists and is a regular file.
+// The second value returned reports whether at least one path exists.
+func FirstExistingFile(paths ...string) (string, bool) {
+	for _, path := range paths {
+		if FileExists(path) {
+			return path, true
+		}
+	}
+	return "", false
+}
+
 // PathExists reports whether path exists.
 func PathExists(path string) bool {
 	_, err := os.Stat(path)
@@ -48,4 +70,15 @@ func AssertPathExists(path string) {
 	if !PathExists(path) {
 		panic(fmt.Errorf("%s does not exist", path))
 	}
+}
+
+// FirstExistingPath returns the first path that exists.
+// The second value returned reports whether at least one path exists.
+func FirstExistingPath(paths ...string) (string, bool) {
+	for _, path := range paths {
+		if PathExists(path) {
+			return path, true
+		}
+	}
+	return "", false
 }
