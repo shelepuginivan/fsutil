@@ -47,6 +47,44 @@ func TestAssertDirExists(t *testing.T) {
 	})
 }
 
+func TestFirstExistingDir(t *testing.T) {
+	t.Run("should return first existing directory", func(t *testing.T) {
+		tmp := t.TempDir()
+
+		f1 := filepath.Join(tmp, "file1")
+		os.WriteFile(f1, []byte("1"), os.ModePerm)
+
+		f2 := filepath.Join(tmp, "file2")
+		os.WriteFile(f2, []byte("2"), os.ModePerm)
+
+		f3 := filepath.Join(tmp, "file3")
+		os.WriteFile(f3, []byte("3"), os.ModePerm)
+
+		d1 := t.TempDir()
+
+		first, exists := fsutil.FirstExistingDir(f1, f2, tmp, f3, d1)
+		assert.Equal(t, tmp, first)
+		assert.True(t, exists)
+	})
+
+	t.Run("should return false if there are no existing directories", func(t *testing.T) {
+		tmp := t.TempDir()
+
+		f1 := filepath.Join(tmp, "file1")
+		os.WriteFile(f1, []byte("1"), os.ModePerm)
+
+		f2 := filepath.Join(tmp, "file2")
+		os.WriteFile(f2, []byte("2"), os.ModePerm)
+
+		f3 := filepath.Join(tmp, "file3")
+		os.WriteFile(f3, []byte("3"), os.ModePerm)
+
+		first, exists := fsutil.FirstExistingDir(f1, f2, f3)
+		assert.Empty(t, first)
+		assert.False(t, exists)
+	})
+}
+
 func TestFileExists(t *testing.T) {
 	t.Run("should return true if file exists", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "file")
@@ -85,6 +123,35 @@ func TestAssertFileExists(t *testing.T) {
 	})
 }
 
+func TestFirstExistingFile(t *testing.T) {
+	t.Run("should return first existing file", func(t *testing.T) {
+		tmp := t.TempDir()
+
+		p1 := filepath.Join(tmp, "file1")
+		os.WriteFile(p1, []byte("1"), os.ModePerm)
+
+		p2 := filepath.Join(tmp, "file2")
+		os.WriteFile(p2, []byte("2"), os.ModePerm)
+
+		d1 := t.TempDir()
+		d2 := t.TempDir()
+
+		first, exists := fsutil.FirstExistingFile(tmp, d1, p1, p2, d2)
+		assert.Equal(t, p1, first)
+		assert.True(t, exists)
+	})
+
+	t.Run("should return false if there are no existing files", func(t *testing.T) {
+		d1 := t.TempDir()
+		d2 := t.TempDir()
+		d3 := t.TempDir()
+
+		first, exists := fsutil.FirstExistingFile(d1, d2, d3)
+		assert.Empty(t, first)
+		assert.False(t, exists)
+	})
+}
+
 func TestPathExists(t *testing.T) {
 	t.Run("should return true if file exists", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "file")
@@ -120,5 +187,35 @@ func TestAssertPathExists(t *testing.T) {
 		assert.Panics(t, func() {
 			fsutil.AssertPathExists("does not exist")
 		})
+	})
+}
+
+func TestFirstExistingPath(t *testing.T) {
+	t.Run("should return first existing path", func(t *testing.T) {
+		tmp := t.TempDir()
+
+		p1 := filepath.Join(tmp, "file1")
+		os.WriteFile(p1, []byte("1"), os.ModePerm)
+
+		p2 := filepath.Join(tmp, "file2")
+		os.WriteFile(p2, []byte("2"), os.ModePerm)
+
+		d1 := t.TempDir()
+		d2 := t.TempDir()
+
+		first, exists := fsutil.FirstExistingPath(tmp, d1, p1, p2, d2)
+		assert.Equal(t, tmp, first)
+		assert.True(t, exists)
+	})
+
+	t.Run("should return false if there are no existing paths", func(t *testing.T) {
+		first, exists := fsutil.FirstExistingPath(
+			"/tmp/this/path/does/not/exist",
+			"/owr24yutr084yut98r23yt4",
+			"f20ifh438fh34rf34",
+		)
+
+		assert.Empty(t, first)
+		assert.False(t, exists)
 	})
 }
