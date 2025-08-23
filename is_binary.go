@@ -62,7 +62,7 @@ func IsBinarySlow(data []byte) bool {
 	return !utf8.Valid(data)
 }
 
-// IsBinarySlow reports whether data is binary (non human-readable text). It
+// IsBinaryFast reports whether data is binary (non human-readable text). It
 // checks only first line of the file, hence the determination performance is
 // the highest at a cost of accuracy.
 //

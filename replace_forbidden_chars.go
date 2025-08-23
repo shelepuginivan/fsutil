@@ -21,8 +21,8 @@ func ReplaceForbiddenChars(name string) string {
 	return ReplaceForbiddenCharsWith(name, "-")
 }
 
-// ReplaceForbiddenChars replaces characters forbidden in some filesystems with
-// an arbitrary character.
+// ReplaceForbiddenCharsWith replaces characters forbidden in some filesystems
+// with the specified character.
 //
 // Characters replaced are:
 //   - < (less than)
